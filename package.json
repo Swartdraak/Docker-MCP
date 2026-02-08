@@ -1,0 +1,33 @@
+{
+  "name": "docker-mcp-server",
+  "version": "1.0.0",
+  "description": "A fully functional MCP Server for Docker daemon communication",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "docker-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "dev": "npm run build && npm run start"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "docker",
+    "containers"
+  ],
+  "author": "Swartdraak",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "dockerode": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/dockerode": "^3.3.31",
+    "typescript": "^5.7.3"
+  }
+}
