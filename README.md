@@ -1,6 +1,6 @@
 # Docker MCP Server
 
-A comprehensive, production-ready, industry-standard compliant MCP (Model Context Protocol) Server that enables full Docker management capabilities for AI assistants like GitHub Copilot and Claude. Featuring 38 powerful tools covering containers, images, networks, volumes, and system operations.
+A comprehensive, production-ready, industry-standard compliant MCP (Model Context Protocol) Server that enables full Docker management capabilities for AI assistants like GitHub Copilot and Claude. Featuring 36 powerful tools covering containers, images, networks, volumes, and system operations.
 
 ## Quick Start
 
@@ -18,7 +18,7 @@ npm start
 ## ✨ Features
 
 ### Core Capabilities
-- ✅ **38 Docker Tools**: Complete coverage of Docker operations
+- ✅ **36 Docker Tools**: Complete coverage of Docker operations
 - ✅ **Container Management**: Create, run, start, stop, restart, pause, unpause, rename, remove, exec, stats, logs
 - ✅ **Image Operations**: List, pull, build, push, tag, remove, prune
 - ✅ **Network Management**: List, create, remove, inspect, connect, disconnect
@@ -115,7 +115,7 @@ To integrate with VS Code and GitHub Copilot, add the following to your MCP sett
 }
 ```
 
-## Available Tools (38 Total)
+## Available Tools (36 Total)
 
 ### Container Operations (15 tools)
 

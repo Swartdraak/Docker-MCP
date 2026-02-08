@@ -1,7 +1,7 @@
 {
   "name": "docker-mcp-server",
   "version": "2.0.0",
-  "description": "A comprehensive, production-ready MCP Server for Docker management with 38 tools and advanced features",
+  "description": "A comprehensive, production-ready MCP Server for Docker management with 36 tools and advanced features",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -13,7 +13,10 @@
     "start": "node dist/index.js",
     "dev": "npm run build && npm run start",
     "lint": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
   },
   "keywords": [
     "mcp",
@@ -44,7 +47,10 @@
   },
   "devDependencies": {
     "@types/dockerode": "^3.3.31",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.10.5",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.7.3"
   },
   "engines": {
