@@ -308,7 +308,7 @@ async function testOperations(docker) {
     logInfo(`  Operating System: ${info.OperatingSystem}`);
     logInfo(`  Architecture: ${info.Architecture}`);
     logInfo(`  CPUs: ${info.NCPU}`);
-    logInfo(`  Total Memory: ${(info.MemTotal / 1024 / 1024 / 1024).toFixed(2)} GB`);
+    logInfo(`  Total Memory: ${(info.MemTotal / (1024 ** 3)).toFixed(2)} GB`);
     
     return true;
   } catch (error) {
