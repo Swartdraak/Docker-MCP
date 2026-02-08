@@ -57,7 +57,6 @@
     "node": ">=18.0.0"
   },
   "overrides": {
-    "glob": "^13.0.0",
-    "inflight": "npm:@multiformats/inflight@^1.0.4"
+    "glob": "10.4.5"
   }
 }
