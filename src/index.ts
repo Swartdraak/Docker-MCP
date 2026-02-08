@@ -45,6 +45,9 @@ export function initializeDockerClient(): Docker {
   if (dockerHost.startsWith('unix://')) {
     // Unix socket
     return new Docker({ socketPath: dockerHost.replace('unix://', '') });
+  } else if (dockerHost.startsWith('npipe://')) {
+    // Windows named pipe
+    return new Docker({ socketPath: dockerHost });
   } else if (dockerHost.startsWith('tcp://')) {
     // TCP connection
     const url = dockerHost.replace('tcp://', '');
@@ -806,6 +809,14 @@ const TOOL_SCHEMAS = {
   system_version: {
     name: "system_version",
     description: "Get Docker version information",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  validate_connection: {
+    name: "validate_connection",
+    description: "Validate Docker connection and test basic operations. Returns connection status, configuration details, and basic Docker information. Useful for troubleshooting connection issues.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -1767,6 +1778,99 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               text: JSON.stringify(version, null, 2),
             },
           ],
+        };
+      }
+
+      case "validate_connection": {
+        const validationResult = {
+          status: "connected",
+          timestamp: new Date().toISOString(),
+          configuration: {
+            dockerHost: process.env.DOCKER_HOST || "default (local socket)",
+            tlsVerify: process.env.DOCKER_TLS_VERIFY === '1' || process.env.DOCKER_TLS_VERIFY === 'true',
+            certPathConfigured: !!process.env.DOCKER_CERT_PATH,
+          },
+          tests: {} as any,
+        };
+
+        try {
+          // Test 1: Get version
+          const version = await docker.version();
+          validationResult.tests.version = {
+            status: "pass",
+            data: {
+              version: version.Version,
+              apiVersion: version.ApiVersion,
+              platform: `${version.Os}/${version.Arch}`,
+            },
+          };
+        } catch (error) {
+          validationResult.status = "error";
+          validationResult.tests.version = {
+            status: "fail",
+            error: error instanceof Error ? error.message : String(error),
+          };
+        }
+
+        try {
+          // Test 2: Get system info
+          const info = await docker.info();
+          validationResult.tests.systemInfo = {
+            status: "pass",
+            data: {
+              containers: info.Containers,
+              containersRunning: info.ContainersRunning,
+              images: info.Images,
+              serverVersion: info.ServerVersion,
+              operatingSystem: info.OperatingSystem,
+            },
+          };
+        } catch (error) {
+          validationResult.status = "error";
+          validationResult.tests.systemInfo = {
+            status: "fail",
+            error: error instanceof Error ? error.message : String(error),
+          };
+        }
+
+        try {
+          // Test 3: List containers
+          const containers = await docker.listContainers({ all: true });
+          validationResult.tests.listContainers = {
+            status: "pass",
+            data: { count: containers.length },
+          };
+        } catch (error) {
+          validationResult.status = "error";
+          validationResult.tests.listContainers = {
+            status: "fail",
+            error: error instanceof Error ? error.message : String(error),
+          };
+        }
+
+        try {
+          // Test 4: List images
+          const images = await docker.listImages();
+          validationResult.tests.listImages = {
+            status: "pass",
+            data: { count: images.length },
+          };
+        } catch (error) {
+          validationResult.status = "error";
+          validationResult.tests.listImages = {
+            status: "fail",
+            error: error instanceof Error ? error.message : String(error),
+          };
+        }
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(validationResult, null, 2),
+            },
+          ],
+          isError: validationResult.status === "error",
         };
       }
 

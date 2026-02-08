@@ -62,10 +62,11 @@ describe('Docker MCP Server', () => {
       // System operations
       'system_info',
       'system_version',
+      'validate_connection',
     ];
 
-    it('should have 36 expected tools', () => {
-      expect(expectedTools.length).toBe(36);
+    it('should have 37 expected tools', () => {
+      expect(expectedTools.length).toBe(37);
     });
 
     it('should have tools in expected categories', () => {
@@ -75,13 +76,13 @@ describe('Docker MCP Server', () => {
       const imageTools = expectedTools.filter(t => t.includes('image'));
       const networkTools = expectedTools.filter(t => t.includes('network'));
       const volumeTools = expectedTools.filter(t => t.includes('volume'));
-      const systemTools = expectedTools.filter(t => t.includes('system'));
+      const systemTools = expectedTools.filter(t => t.includes('system') || t === 'validate_connection');
 
       expect(containerTools.length).toBe(15);
       expect(imageTools.length).toBe(7);
       expect(networkTools.length).toBe(7);
       expect(volumeTools.length).toBe(5);
-      expect(systemTools.length).toBe(2);
+      expect(systemTools.length).toBe(3);
     });
   });
 

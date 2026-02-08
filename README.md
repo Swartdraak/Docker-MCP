@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
 [![Docker](https://img.shields.io/badge/Docker-API-2496ED?logo=docker)](https://www.docker.com/)
 
-A comprehensive, production-ready, industry-standard compliant MCP (Model Context Protocol) Server that enables full Docker management capabilities for AI assistants like GitHub Copilot and Claude. Featuring 36 powerful tools covering containers, images, networks, volumes, and system operations.
+A comprehensive, production-ready, industry-standard compliant MCP (Model Context Protocol) Server that enables full Docker management capabilities for AI assistants like GitHub Copilot and Claude. Featuring 37 powerful tools covering containers, images, networks, volumes, and system operations.
 
 ## Quick Start
 
@@ -25,14 +25,14 @@ npm start
 ## ✨ Features
 
 ### Core Capabilities
-- ✅ **36 Docker Tools**: Complete coverage of Docker operations
+- ✅ **37 Docker Tools**: Complete coverage of Docker operations including connection validation
 - ✅ **Remote Docker Support**: Connect to Docker on remote hosts via TCP, HTTP, HTTPS, or SSH tunnel
 - ✅ **Secure Connections**: Full TLS/SSL support for secure remote Docker management
 - ✅ **Container Management**: Create, run, start, stop, restart, pause, unpause, rename, remove, exec, stats, logs
 - ✅ **Image Operations**: List, pull, build, push, tag, remove, prune
 - ✅ **Network Management**: List, create, remove, inspect, connect, disconnect
 - ✅ **Volume Management**: List, create, remove, inspect, prune
-- ✅ **System Operations**: Info, version, prune (containers, images, volumes, networks)
+- ✅ **System Operations**: Info, version, connection validation, prune (containers, images, volumes, networks)
 - ✅ **Proper Array Handling**: Correctly handles command, entrypoint, and environment variables
 - ✅ **VS Code Integration**: Works seamlessly with GitHub Copilot
 - ✅ **Industry Standard**: Uses MCP SDK and Docker best practices
@@ -190,7 +190,70 @@ To integrate with VS Code and GitHub Copilot, add the following to your MCP sett
 }
 ```
 
-## Available Tools (36 Total)
+## Testing Your Connection
+
+### Connection Test Utility
+
+Before using the MCP server, you can test your Docker connection with the included test utility:
+
+```bash
+# Test local Docker connection
+node test-connection.js
+
+# Test remote Docker via TCP
+DOCKER_HOST=tcp://192.168.1.100:2375 node test-connection.js
+
+# Test remote Docker via TLS
+DOCKER_HOST=https://192.168.1.100:2376 \
+DOCKER_TLS_VERIFY=1 \
+DOCKER_CERT_PATH=~/.docker/certs \
+node test-connection.js
+
+# Test SSH tunnel connection
+DOCKER_HOST=tcp://localhost:2375 node test-connection.js
+```
+
+The test utility will:
+- ✓ Validate your configuration
+- ✓ Check TLS certificates (if applicable)
+- ✓ Test connection to Docker daemon
+- ✓ Verify Docker operations (list containers, images, networks, volumes)
+- ✓ Display system information
+- ✓ Provide troubleshooting recommendations
+
+### validate_connection Tool
+
+Once the MCP server is running, you can also use the `validate_connection` tool from your AI assistant:
+
+```
+"Validate my Docker connection"
+```
+
+This tool performs runtime connectivity tests and returns:
+- Connection status
+- Docker version and API information
+- System information
+- Test results for common operations
+
+### Manual Testing
+
+You can also test your connection directly with Docker CLI:
+
+```bash
+# Set environment variables
+export DOCKER_HOST=tcp://192.168.1.100:2375
+
+# Test commands
+docker version
+docker info
+docker ps
+```
+
+For detailed setup instructions, troubleshooting, and platform-specific guides, see:
+- **[CONFIGURATION.md](CONFIGURATION.md)** - MCP server configuration examples
+- **[REMOTE_SETUP.md](REMOTE_SETUP.md)** - Comprehensive remote connection setup guide (includes Windows 11 specific instructions)
+
+## Available Tools (37 Total)
 
 ### Container Operations (15 tools)
 
@@ -502,7 +565,7 @@ Remove all unused volumes
 {}
 ```
 
-### System Operations (5 tools)
+### System Operations (3 tools)
 
 #### `system_info` 🆕
 Get Docker system information
@@ -512,6 +575,12 @@ Get Docker system information
 
 #### `system_version` 🆕
 Get Docker version information
+```json
+{}
+```
+
+#### `validate_connection` 🆕
+Validate Docker connection and test basic operations. Returns connection status, configuration details, and test results. Useful for troubleshooting connection issues.
 ```json
 {}
 ```

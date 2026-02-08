@@ -1,11 +1,16 @@
 # Example MCP Configuration for Docker Server
 
+> **Note**: For comprehensive remote connection setup including Windows 11 specific instructions, SSH tunneling, TLS certificate generation, and troubleshooting, see **[REMOTE_SETUP.md](REMOTE_SETUP.md)**.
+>
+> This file provides quick configuration examples. For detailed setup guides and troubleshooting, refer to REMOTE_SETUP.md.
+
 ## VS Code / GitHub Copilot Configuration
 
 ### Local Docker (Default)
 
-Create or edit `~/.vscode/mcp-settings.json`:
+Create or edit `~/.vscode/mcp-settings.json` (Linux/Mac) or `%USERPROFILE%\.vscode\mcp-settings.json` (Windows):
 
+**Linux/Mac:**
 ```json
 {
   "mcpServers": {
@@ -17,10 +22,23 @@ Create or edit `~/.vscode/mcp-settings.json`:
 }
 ```
 
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "docker": {
+      "command": "node",
+      "args": ["C:\\Users\\YourName\\Docker-MCP\\dist\\index.js"]
+    }
+  }
+}
+```
+
+**Note**: Windows paths must use double backslashes (`\\`) or forward slashes (`/`).
+
 ### Remote Docker Host via TCP
 
-To connect to a remote Docker host over TCP:
-
+**Linux/Mac:**
 ```json
 {
   "mcpServers": {
@@ -35,10 +53,24 @@ To connect to a remote Docker host over TCP:
 }
 ```
 
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "docker": {
+      "command": "node",
+      "args": ["C:\\Users\\YourName\\Docker-MCP\\dist\\index.js"],
+      "env": {
+        "DOCKER_HOST": "tcp://192.168.1.100:2375"
+      }
+    }
+  }
+}
+```
+
 ### Remote Docker Host via HTTPS with TLS
 
-For secure remote connections with TLS certificates:
-
+**Linux/Mac:**
 ```json
 {
   "mcpServers": {
@@ -48,7 +80,24 @@ For secure remote connections with TLS certificates:
       "env": {
         "DOCKER_HOST": "https://192.168.1.100:2376",
         "DOCKER_TLS_VERIFY": "1",
-        "DOCKER_CERT_PATH": "/path/to/certs"
+        "DOCKER_CERT_PATH": "/home/user/.docker/certs"
+      }
+    }
+  }
+}
+```
+
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "docker": {
+      "command": "node",
+      "args": ["C:\\Users\\YourName\\Docker-MCP\\dist\\index.js"],
+      "env": {
+        "DOCKER_HOST": "https://192.168.1.100:2376",
+        "DOCKER_TLS_VERIFY": "1",
+        "DOCKER_CERT_PATH": "C:\\Users\\YourName\\.docker\\certs"
       }
     }
   }
@@ -381,3 +430,31 @@ GitHub Copilot will call:
 - The server must be built (`npm run build`) before use
 - Docker daemon must be running and accessible
 - On Linux, ensure your user has permission to access Docker socket
+- On Windows, use double backslashes (`\\`) or forward slashes (`/`) in paths
+
+## Testing Your Connection
+
+Before using the MCP server in production, test your Docker connection:
+
+```bash
+# Test your connection
+node test-connection.js
+
+# Or with environment variables
+DOCKER_HOST=tcp://192.168.1.100:2375 node test-connection.js
+```
+
+The test utility will validate your configuration, test connectivity, and provide troubleshooting recommendations if issues are found.
+
+Once the MCP server is running, you can also use the `validate_connection` tool through your AI assistant to verify the connection at runtime.
+
+## Additional Resources
+
+- **[REMOTE_SETUP.md](REMOTE_SETUP.md)** - Comprehensive remote connection setup guide
+  - Windows 11 specific instructions
+  - Docker daemon configuration
+  - SSH tunnel setup (Windows/Linux/Mac)
+  - TLS certificate generation
+  - Troubleshooting common issues
+- **[README.md](README.md)** - Main documentation and feature overview
+- **[EXAMPLES.md](EXAMPLES.md)** - Real-world usage examples
