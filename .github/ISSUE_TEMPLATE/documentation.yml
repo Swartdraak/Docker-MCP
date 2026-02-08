@@ -1,0 +1,99 @@
+name: 📚 Documentation
+description: Report an issue with documentation or suggest improvements
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation!
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting
+      options:
+        - label: I have searched existing issues to ensure this hasn't been reported
+          required: true
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation issue is this?
+      options:
+        - Typo/Grammar
+        - Incorrect Information
+        - Missing Information
+        - Unclear/Confusing
+        - Example Needed
+        - New Documentation Needed
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: location
+    attributes:
+      label: Documentation Location
+      description: Where is the documentation issue?
+      options:
+        - README.md
+        - CONFIGURATION.md
+        - CONTRIBUTING.md
+        - SECURITY.md
+        - EXAMPLES.md
+        - REMOTE_SETUP.md
+        - MIGRATION.md
+        - Code Comments
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Issue Description
+      description: Describe the documentation issue
+      placeholder: What is wrong or missing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Documentation
+      description: Quote or link to the current documentation (if applicable)
+      placeholder: Paste the current text or provide a link
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: How should the documentation be improved?
+      placeholder: Provide your suggested text or explanation
+    validations:
+      required: false
+
+  - type: dropdown
+    id: willing
+    attributes:
+      label: Willing to Contribute
+      description: Would you be willing to submit a PR with these changes?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context or screenshots
+    validations:
+      required: false

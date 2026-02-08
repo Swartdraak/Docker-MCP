@@ -1,0 +1,69 @@
+name: ❓ Question
+description: Ask a question about Docker-MCP
+title: "[Question]: "
+labels: ["question", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? We're here to help! Please note that GitHub Discussions might be better suited for general questions.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting
+      options:
+        - label: I have searched existing issues and discussions
+          required: true
+        - label: I have read the [documentation](https://github.com/Swartdraak/Docker-MCP#readme)
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What is your question about?
+      options:
+        - Installation/Setup
+        - Configuration
+        - Usage/How-to
+        - Remote Connections
+        - Security
+        - Performance
+        - Integration
+        - Troubleshooting
+        - Best Practices
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: Ask your question here
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide any relevant context
+      placeholder: |
+        - What are you trying to achieve?
+        - What have you tried so far?
+        - Any relevant configuration or environment details?
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other information that might be helpful
+    validations:
+      required: false

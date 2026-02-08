@@ -1,0 +1,163 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this bug! Please fill out the form below to help us investigate.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting
+      options:
+        - label: I have searched existing issues to ensure this bug hasn't been reported
+          required: true
+        - label: I have read the [documentation](https://github.com/Swartdraak/Docker-MCP#readme)
+          required: true
+        - label: I am using the latest version of Docker-MCP
+          required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe what happened and what you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Configure Docker-MCP with...
+        2. Run command...
+        3. Observe error...
+      value: |
+        1. 
+        2. 
+        3. 
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Describe the expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Describe what actually happened, include error messages
+    validations:
+      required: true
+
+  - type: dropdown
+    id: docker-type
+    attributes:
+      label: Docker Connection Type
+      description: What type of Docker connection are you using?
+      options:
+        - Local Docker (Unix socket)
+        - Remote Docker (TCP)
+        - Remote Docker (SSH)
+        - Remote Docker (TLS/HTTPS)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Docker-MCP Version
+      description: What version of Docker-MCP are you using?
+      placeholder: "e.g., 2.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js are you using?
+      placeholder: "e.g., 18.17.0"
+    validations:
+      required: true
+
+  - type: input
+    id: docker-version
+    attributes:
+      label: Docker Version
+      description: What version of Docker are you using?
+      placeholder: "e.g., 24.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      options:
+        - Linux
+        - macOS
+        - Windows (WSL2)
+        - Windows (native)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: Any additional environment details
+      placeholder: |
+        - OS: Ubuntu 22.04
+        - Shell: bash
+        - Docker: running in WSL2
+        - Other relevant details
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Please copy and paste any relevant log output
+      render: shell
+      placeholder: Paste logs here
+    validations:
+      required: false
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Relevant configuration (remove any sensitive data)
+      render: json
+      placeholder: Paste configuration here
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem
+      placeholder: Screenshots, related issues, attempted solutions, etc.
+    validations:
+      required: false

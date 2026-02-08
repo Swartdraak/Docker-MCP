@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/Swartdraak/Docker-MCP/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📖 Documentation
+    url: https://github.com/Swartdraak/Docker-MCP#readme
+    about: View the project documentation
+  - name: 🔒 Security Issue
+    url: https://github.com/Swartdraak/Docker-MCP/security/advisories/new
+    about: Report a security vulnerability privately
