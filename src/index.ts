@@ -554,7 +554,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         
         // Type-safe log fetching
         if (follow) {
-          const logs = await container.logs({
+          await container.logs({
             stdout: true,
             stderr: true,
             tail: tail,
