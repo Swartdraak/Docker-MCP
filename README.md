@@ -1,6 +1,13 @@
 # Docker MCP Server
 
-A fully functional, feature-rich, industry-standard compliant MCP (Model Context Protocol) Server that enables communication with Docker daemon. This server allows AI assistants like GitHub Copilot and Claude to interact with Docker containers, images, networks, and volumes through a standardized interface.
+[![CI](https://github.com/Swartdraak/Docker-MCP/actions/workflows/ci.yml/badge.svg)](https://github.com/Swartdraak/Docker-MCP/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Swartdraak/Docker-MCP/actions/workflows/codeql.yml/badge.svg)](https://github.com/Swartdraak/Docker-MCP/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-API-2496ED?logo=docker)](https://www.docker.com/)
+
+A comprehensive, production-ready, industry-standard compliant MCP (Model Context Protocol) Server that enables full Docker management capabilities for AI assistants like GitHub Copilot and Claude. Featuring 36 powerful tools covering containers, images, networks, volumes, and system operations.
 
 ## Quick Start
 
@@ -15,15 +22,30 @@ npm run build
 npm start
 ```
 
-## Features
+## ✨ Features
 
-- ✅ **Complete Docker Operations**: Create, run, start, stop, remove containers
-- ✅ **Proper Array Handling**: Correctly handles command, entrypoint, and environment variables as arrays
-- ✅ **Image Management**: Pull images, list images with detailed information
-- ✅ **Container Inspection**: Get detailed container information and logs
-- ✅ **Network & Volume Support**: List Docker networks and volumes
-- ✅ **VS Code Integration**: Works seamlessly with GitHub Copilot and VS Code
-- ✅ **Industry Standard Compliant**: Uses MCP SDK and follows best practices
+### Core Capabilities
+- ✅ **36 Docker Tools**: Complete coverage of Docker operations
+- ✅ **Container Management**: Create, run, start, stop, restart, pause, unpause, rename, remove, exec, stats, logs
+- ✅ **Image Operations**: List, pull, build, push, tag, remove, prune
+- ✅ **Network Management**: List, create, remove, inspect, connect, disconnect
+- ✅ **Volume Management**: List, create, remove, inspect, prune
+- ✅ **System Operations**: Info, version, prune (containers, images, volumes, networks)
+- ✅ **Proper Array Handling**: Correctly handles command, entrypoint, and environment variables
+- ✅ **VS Code Integration**: Works seamlessly with GitHub Copilot
+- ✅ **Industry Standard**: Uses MCP SDK and Docker best practices
+- ✅ **TypeScript**: Full type safety and modern JavaScript features
+
+### What's New in v2.0
+- 🚀 **25 New Tools**: Added extensive container, image, network, and volume management
+- 🔧 **Container Exec**: Execute commands in running containers
+- 📊 **Container Stats**: Real-time CPU, memory, network, and I/O metrics
+- 🏗️ **Image Building**: Build images from Dockerfile with build args
+- 🔄 **Advanced Lifecycle**: Restart, pause, unpause, rename containers
+- 🌐 **Full Network CRUD**: Create, inspect, connect, disconnect, remove networks
+- 💾 **Full Volume CRUD**: Create, inspect, remove volumes
+- 🧹 **Resource Cleanup**: Prune unused containers, images, volumes, networks
+- ⚙️ **System Info**: Get Docker daemon information and version
 
 ## Installation
 
@@ -100,9 +122,9 @@ To integrate with VS Code and GitHub Copilot, add the following to your MCP sett
 }
 ```
 
-## Available Tools
+## Available Tools (36 Total)
 
-### Container Operations
+### Container Operations (15 tools)
 
 #### `list_containers`
 List all Docker containers (running or all)
@@ -184,7 +206,67 @@ Get container logs
 }
 ```
 
-### Image Operations
+#### `exec_container` 🆕
+Execute a command in a running container
+```json
+{
+  "containerId": "container_id_or_name",
+  "command": ["ls", "-la", "/app"],
+  "workingDir": "/app",
+  "env": ["DEBUG=true"]
+}
+```
+
+#### `container_stats` 🆕
+Get real-time resource usage statistics (CPU, memory, network, I/O)
+```json
+{
+  "containerId": "container_id_or_name",
+  "stream": false
+}
+```
+
+#### `restart_container` 🆕
+Restart a Docker container
+```json
+{
+  "containerId": "container_id_or_name",
+  "timeout": 10
+}
+```
+
+#### `pause_container` 🆕
+Pause all processes within a container
+```json
+{
+  "containerId": "container_id_or_name"
+}
+```
+
+#### `unpause_container` 🆕
+Unpause all processes within a container
+```json
+{
+  "containerId": "container_id_or_name"
+}
+```
+
+#### `rename_container` 🆕
+Rename a Docker container
+```json
+{
+  "containerId": "container_id_or_name",
+  "newName": "new-container-name"
+}
+```
+
+#### `prune_containers` 🆕
+Remove all stopped containers
+```json
+{}
+```
+
+### Image Operations (7 tools)
 
 #### `list_images`
 List Docker images
@@ -202,7 +284,55 @@ Pull an image from registry
 }
 ```
 
-### Network & Volume Operations
+#### `build_image` 🆕
+Build a Docker image from a Dockerfile
+```json
+{
+  "context": "/path/to/build/context",
+  "dockerfile": "Dockerfile",
+  "tag": "myimage:latest",
+  "buildArgs": {
+    "NODE_VERSION": "18"
+  }
+}
+```
+
+#### `tag_image` 🆕
+Tag an image with a new name/tag
+```json
+{
+  "image": "myimage:latest",
+  "repo": "myrepo/myimage",
+  "tag": "v1.0.0"
+}
+```
+
+#### `push_image` 🆕
+Push an image to a Docker registry
+```json
+{
+  "image": "myrepo/myimage:v1.0.0"
+}
+```
+
+#### `remove_image` 🆕
+Remove a Docker image
+```json
+{
+  "image": "image_id_or_name",
+  "force": false
+}
+```
+
+#### `prune_images` 🆕
+Remove unused images
+```json
+{
+  "all": false
+}
+```
+
+### Network Operations (6 tools)
 
 #### `list_networks`
 List Docker networks
@@ -210,8 +340,110 @@ List Docker networks
 {}
 ```
 
+#### `create_network` 🆕
+Create a Docker network
+```json
+{
+  "name": "my-network",
+  "driver": "bridge",
+  "internal": false
+}
+```
+
+#### `inspect_network` 🆕
+Get detailed information about a network
+```json
+{
+  "networkId": "network_id_or_name"
+}
+```
+
+#### `connect_network` 🆕
+Connect a container to a network
+```json
+{
+  "networkId": "network_id_or_name",
+  "containerId": "container_id_or_name"
+}
+```
+
+#### `disconnect_network` 🆕
+Disconnect a container from a network
+```json
+{
+  "networkId": "network_id_or_name",
+  "containerId": "container_id_or_name",
+  "force": false
+}
+```
+
+#### `remove_network` 🆕
+Remove a Docker network
+```json
+{
+  "networkId": "network_id_or_name"
+}
+```
+
+#### `prune_networks` 🆕
+Remove all unused networks
+```json
+{}
+```
+
+### Volume Operations (5 tools)
+
 #### `list_volumes`
 List Docker volumes
+```json
+{}
+```
+
+#### `create_volume` 🆕
+Create a Docker volume
+```json
+{
+  "name": "my-volume",
+  "driver": "local",
+  "labels": {
+    "environment": "production"
+  }
+}
+```
+
+#### `inspect_volume` 🆕
+Get detailed information about a volume
+```json
+{
+  "volumeName": "volume_name"
+}
+```
+
+#### `remove_volume` 🆕
+Remove a Docker volume
+```json
+{
+  "volumeName": "volume_name",
+  "force": false
+}
+```
+
+#### `prune_volumes` 🆕
+Remove all unused volumes
+```json
+{}
+```
+
+### System Operations (5 tools)
+
+#### `system_info` 🆕
+Get Docker system information
+```json
+{}
+```
+
+#### `system_version` 🆕
+Get Docker version information
 ```json
 {}
 ```
