@@ -98,21 +98,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version Guidelines
 
+This project follows [Semantic Versioning 2.0.0](https://semver.org/). For complete versioning details, see [VERSIONING.md](VERSIONING.md).
+
 ### Major Version (X.0.0)
 - Breaking API changes
 - Removal of deprecated features
 - Major architectural changes
+- Incompatible tool schema changes
 
 ### Minor Version (0.X.0)
 - New features and tools
 - Non-breaking enhancements
 - New capabilities
+- Backward-compatible changes
 
 ### Patch Version (0.0.X)
 - Bug fixes
 - Documentation updates
 - Security patches
 - Performance improvements
+- Dependency updates (non-breaking)
+
+### Pre-release Versions
+- `X.Y.Z-alpha.N` - Alpha releases (unstable)
+- `X.Y.Z-beta.N` - Beta releases (feature complete, testing)
+- `X.Y.Z-rc.N` - Release candidates (final testing)
+
+---
+
+## Branching and Release Strategy
+
+This project follows Git Flow branching strategy. For complete branching details, see [BRANCHING.md](BRANCHING.md).
+
+**Key Branches:**
+- `main` - Production releases (tagged)
+- `develop` - Integration branch
+- `feature/*` - New features
+- `bugfix/*` - Bug fixes
+- `hotfix/*` - Critical production fixes
+- `release/*` - Release preparation
+
+**Release Process:**
+1. Create release branch from `develop`
+2. Update version and changelog
+3. Merge to `main` and tag
+4. Automated CI/CD publishes to npm
+5. Merge back to `develop`
 
 ---
 
@@ -122,3 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Issues](https://github.com/Swartdraak/Docker-MCP/issues)
 - [Pull Requests](https://github.com/Swartdraak/Docker-MCP/pulls)
 - [Releases](https://github.com/Swartdraak/Docker-MCP/releases)
+- [npm Package](https://www.npmjs.com/package/@swartdraak/docker-mcp-server)
+- [Branching Strategy](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCHING.md)
+- [Versioning Guide](https://github.com/Swartdraak/Docker-MCP/blob/main/VERSIONING.md)
+- [Contributing Guide](https://github.com/Swartdraak/Docker-MCP/blob/main/CONTRIBUTING.md)

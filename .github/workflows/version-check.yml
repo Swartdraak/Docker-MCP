@@ -1,0 +1,152 @@
+name: Version Check
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'package.json'
+      - 'CHANGELOG.md'
+
+jobs:
+  version-check:
+    name: Validate Version and Changelog
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+    - name: Checkout PR
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Get target branch
+      id: target
+      run: |
+        echo "branch=${{ github.base_ref }}" >> $GITHUB_OUTPUT
+    
+    - name: Prepare base files from target branch
+      run: |
+        git fetch origin ${{ steps.target.outputs.branch }}
+        git show origin/${{ steps.target.outputs.branch }}:package.json > package.json.base || true
+        git show origin/${{ steps.target.outputs.branch }}:CHANGELOG.md > CHANGELOG.md.base || true
+    
+    - name: Check version bumped
+      id: version
+      run: |
+        if [ ! -f package.json.base ]; then
+          echo "No base package.json found, skipping version check"
+          echo "changed=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        
+        BASE_VERSION=$(jq -r '.version' package.json.base)
+        NEW_VERSION=$(jq -r '.version' package.json)
+        
+        echo "Base version: $BASE_VERSION"
+        echo "New version: $NEW_VERSION"
+        
+        if [ "$BASE_VERSION" = "$NEW_VERSION" ]; then
+          echo "ℹ️  Version not changed in package.json (still $BASE_VERSION)"
+          echo "changed=false" >> $GITHUB_OUTPUT
+          exit 0
+        else
+          echo "✅ Version updated: $BASE_VERSION → $NEW_VERSION"
+          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "base=$BASE_VERSION" >> $GITHUB_OUTPUT
+          echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Validate version format
+      if: steps.version.outputs.changed == 'true'
+      run: |
+        NEW_VERSION="${{ steps.version.outputs.new }}"
+        
+        # Check semantic versioning format
+        if [[ ! "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?(\+[a-zA-Z0-9.]+)?$ ]]; then
+          echo "❌ Invalid version format: $NEW_VERSION"
+          echo "Expected: MAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH-prerelease"
+          exit 1
+        fi
+        
+        echo "✅ Version format is valid"
+    
+    - name: Check changelog updated
+      if: steps.version.outputs.changed == 'true'
+      id: changelog
+      run: |
+        if [ ! -f CHANGELOG.md.base ]; then
+          echo "No base CHANGELOG.md found, skipping changelog check"
+          exit 0
+        fi
+        
+        NEW_VERSION="${{ steps.version.outputs.new }}"
+        
+        # Check if new version is mentioned in CHANGELOG (fixed-string match)
+        if grep -Fq "[$NEW_VERSION]" CHANGELOG.md; then
+          echo "✅ CHANGELOG.md updated with version $NEW_VERSION"
+        else
+          echo "❌ CHANGELOG.md not updated with version $NEW_VERSION"
+          echo "Please add a section for version $NEW_VERSION in CHANGELOG.md"
+          exit 1
+        fi
+    
+    - name: Check for breaking changes label
+      if: steps.version.outputs.changed == 'true'
+      run: |
+        BASE_VERSION="${{ steps.version.outputs.base }}"
+        NEW_VERSION="${{ steps.version.outputs.new }}"
+        
+        BASE_MAJOR=$(echo $BASE_VERSION | cut -d. -f1)
+        NEW_MAJOR=$(echo $NEW_VERSION | cut -d. -f1)
+        
+        if [ "$NEW_MAJOR" != "$BASE_MAJOR" ]; then
+          echo "⚠️  Major version bump detected ($BASE_MAJOR → $NEW_MAJOR)"
+          echo "This is a breaking change. Ensure:"
+          echo "  1. CHANGELOG.md documents breaking changes"
+          echo "  2. MIGRATION.md is updated if needed"
+          echo "  3. PR is labeled with 'breaking-change'"
+        fi
+    
+    - name: Comment on PR
+      if: steps.version.outputs.changed == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const base = '${{ steps.version.outputs.base }}';
+          const newVer = '${{ steps.version.outputs.new }}';
+          
+          const comment = `## 📦 Version Check
+          
+          ✅ Version updated: \`${base}\` → \`${newVer}\`
+          
+          ### Checklist
+          - [x] Version bumped in package.json
+          - [x] Version format is valid (SemVer)
+          - [x] CHANGELOG.md updated
+          
+          ### Release Notes
+          When this PR is merged to \`main\`:
+          1. The changes will be prepared for release version ${newVer}
+          
+          To trigger the actual release and publish:
+          1. Create and push the tag \`v${newVer}\`
+          2. The release workflow will create a GitHub release
+          3. The release workflow will build and publish the package to npm
+          
+          See [VERSIONING.md](https://github.com/${{ github.repository }}/blob/main/VERSIONING.md) for details.
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+    
+    - name: Cleanup
+      if: always()
+      run: |
+        rm -f package.json.base CHANGELOG.md.base

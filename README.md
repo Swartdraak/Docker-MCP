@@ -1,11 +1,14 @@
 # Docker MCP Server
 
+[![npm version](https://img.shields.io/npm/v/@swartdraak/docker-mcp-server.svg)](https://www.npmjs.com/package/@swartdraak/docker-mcp-server)
+[![npm downloads](https://img.shields.io/npm/dm/@swartdraak/docker-mcp-server.svg)](https://www.npmjs.com/package/@swartdraak/docker-mcp-server)
 [![CI](https://github.com/Swartdraak/Docker-MCP/actions/workflows/ci.yml/badge.svg)](https://github.com/Swartdraak/Docker-MCP/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/Swartdraak/Docker-MCP/actions/workflows/codeql.yml/badge.svg)](https://github.com/Swartdraak/Docker-MCP/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
 [![Docker](https://img.shields.io/badge/Docker-API-2496ED?logo=docker)](https://www.docker.com/)
+[![Semantic Versioning](https://img.shields.io/badge/semver-2.0.0-blue)](https://semver.org/)
 
 A comprehensive, production-ready, industry-standard compliant MCP (Model Context Protocol) Server that enables full Docker management capabilities for AI assistants like GitHub Copilot and Claude. Featuring 37 powerful tools covering containers, images, networks, volumes, and system operations.
 
@@ -57,13 +60,21 @@ npm start
 
 ## Installation
 
-### Prerequisites
+### Via npm (Recommended)
+
+```bash
+npm install -g @swartdraak/docker-mcp-server
+```
+
+### From Source
+
+#### Prerequisites
 
 - Node.js 18 or higher
 - Docker installed and running
 - npm or yarn package manager
 
-### Setup
+#### Setup
 
 1. Clone the repository:
 ```bash
@@ -669,9 +680,74 @@ This server is specifically designed to handle arrays correctly. If you encounte
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+### Development Workflow
+
+This project follows industry-standard practices:
+
+- **Branching Strategy**: Git Flow (see [BRANCHING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCHING.md))
+- **Versioning**: Semantic Versioning 2.0.0 (see [VERSIONING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/VERSIONING.md))
+- **Commit Convention**: Conventional Commits
+- **CI/CD**: Automated testing and releases via GitHub Actions
+
+### Quick Start for Contributors
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Make your changes with conventional commits
+4. Ensure tests pass: `npm test`
+5. Push and create a Pull Request to `develop`
+
+For detailed guidelines, see [CONTRIBUTING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/CONTRIBUTING.md).
+
+### Branch Structure
+
+- `main` - Production releases (protected)
+- `develop` - Integration branch (protected)
+- `feature/*` - New features
+- `bugfix/*` - Bug fixes
+- `hotfix/*` - Critical production fixes
+
+### Release Process
+
+Releases are automated via GitHub Actions when tags are pushed:
+
+```bash
+# Create release branch
+git checkout -b release/2.1.0
+
+# Update version and changelog
+npm version minor
+
+# Merge to main and tag
+git checkout main
+git merge --no-ff release/2.1.0
+git tag -a v2.1.0 -m "Version 2.1.0"
+git push origin main --tags
+```
+
+See [VERSIONING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/VERSIONING.md) for complete release procedures.
+
+
 For detailed usage examples, see [EXAMPLES.md](EXAMPLES.md).
 
 For configuration help, see [CONFIGURATION.md](CONFIGURATION.md).
+
+## Documentation
+
+### User Documentation
+- [README.md](README.md) - Main documentation and quick start
+- [CONFIGURATION.md](CONFIGURATION.md) - Configuration options and setup
+- [EXAMPLES.md](EXAMPLES.md) - Usage examples for all tools
+- [REMOTE_SETUP.md](https://github.com/Swartdraak/Docker-MCP/blob/main/REMOTE_SETUP.md) - Remote Docker connection setup
+- [MIGRATION.md](https://github.com/Swartdraak/Docker-MCP/blob/main/MIGRATION.md) - Migration guides for version upgrades
+
+### Developer Documentation
+- [CONTRIBUTING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/CONTRIBUTING.md) - Contribution guidelines and workflow
+- [BRANCHING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCHING.md) - Git Flow branching strategy
+- [VERSIONING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/VERSIONING.md) - Semantic versioning and release process
+- [BRANCH_PROTECTION.md](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCH_PROTECTION.md) - Branch protection setup guide
+- [CHANGELOG.md](CHANGELOG.md) - Version history and changes
+- [SECURITY.md](https://github.com/Swartdraak/Docker-MCP/blob/main/SECURITY.md) - Security policies and reporting
 
 ## License
 

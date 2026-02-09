@@ -1,0 +1,85 @@
+# Source files
+src/
+tests/
+*.ts
+!*.d.ts
+
+# Configuration files
+tsconfig.json
+jest.config.js
+.eslintrc*
+.prettierrc*
+
+# Development and testing
+test-connection.js
+*.test.js
+*.spec.js
+__tests__/
+__mocks__/
+coverage/
+.nyc_output/
+
+# Build artifacts
+*.log
+*.tgz
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Environment and system files
+.env
+.env.*
+.DS_Store
+Thumbs.db
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.travis.yml
+.gitlab-ci.yml
+azure-pipelines.yml
+circle.yml
+appveyor.yml
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Documentation development files
+docs/
+*.draft.md
+*.wip.md
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Specific to this project - keep only essentials
+CONTRIBUTING.md
+SECURITY.md
+MIGRATION.md
+REMOTE_SETUP.md
+IMPLEMENTATION_SUMMARY.md
+BRANCHING.md
+VERSIONING.md
+
+# Keep these for npm package
+# README.md
+# LICENSE
+# CHANGELOG.md
+# CONFIGURATION.md
+# EXAMPLES.md
+# package.json
+# dist/

@@ -1,5 +1,5 @@
 {
-  "name": "docker-mcp-server",
+  "name": "@swartdraak/docker-mcp-server",
   "version": "2.0.0",
   "description": "A comprehensive, production-ready MCP Server for Docker management with 36 tools and advanced features",
   "type": "module",
@@ -16,7 +16,10 @@
     "clean": "rm -rf dist",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
-    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "prepublishOnly": "npm run clean && npm run build && npm test",
+    "prepack": "npm run build",
+    "prepare": "npm run build"
   },
   "keywords": [
     "mcp",
@@ -53,8 +56,21 @@
     "ts-jest": "^29.4.6",
     "typescript": "^5.7.3"
   },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "CONFIGURATION.md",
+    "EXAMPLES.md"
+  ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "overrides": {
     "glob": "^13.0.0"
