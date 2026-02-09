@@ -90,7 +90,7 @@ describe('Docker MCP Server', () => {
     it('should have correct package metadata', async () => {
       const pkg = await import('../package.json', { assert: { type: 'json' } });
       
-      expect(pkg.default.name).toBe('docker-mcp-server');
+      expect(pkg.default.name).toBe('@swartdraak/docker-mcp-server');
       expect(pkg.default.version).toBe('2.0.0');
       expect(pkg.default.description).toContain('MCP Server');
       expect(pkg.default.license).toBe('MIT');
