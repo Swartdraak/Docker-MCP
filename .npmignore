@@ -66,20 +66,21 @@ tmp/
 temp/
 *.tmp
 
-# Specific to this project - keep only essentials
-CONTRIBUTING.md
-SECURITY.md
-MIGRATION.md
-REMOTE_SETUP.md
-IMPLEMENTATION_SUMMARY.md
-BRANCHING.md
-VERSIONING.md
-
 # Keep these for npm package
 # README.md
 # LICENSE
 # CHANGELOG.md
 # CONFIGURATION.md
 # EXAMPLES.md
+# CONTRIBUTING.md
+# SECURITY.md
+# MIGRATION.md
+# REMOTE_SETUP.md
+# IMPLEMENTATION_SUMMARY.md
+# QUICK_REFERENCE.md
+# BRANCHING.md
+# VERSIONING.md
+# BRANCH_PROTECTION.md
+# RELEASE_GUIDE.md
 # package.json
 # dist/

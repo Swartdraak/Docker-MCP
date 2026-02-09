@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `rename_container` - Rename existing containers
 - `prune_containers` - Remove all stopped containers
 
+#### Connection & Validation (1 new tool)
+- `validate_connection` - Validate Docker connection and test operations with comprehensive diagnostics
+
 #### Image Operations (5 new tools)
 - `build_image` - Build Docker images from Dockerfile with build args support
 - `tag_image` - Tag images with new repository names and tags
@@ -54,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changelog documentation
 
 #### Documentation
-- Complete tool reference with 38 documented tools
+- Complete tool reference with 37 documented tools
 - Enhanced README with all new features
 - Usage examples for all new operations
 - Security best practices and considerations
@@ -63,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated package version to 2.0.0
 - Enhanced package.json with comprehensive metadata
 - Improved README structure and organization
-- Updated tool count from 13 to 38
+- Updated tool count from 13 to 37
 - Added repository, bugs, and homepage URLs to package.json
 
 ### Technical
