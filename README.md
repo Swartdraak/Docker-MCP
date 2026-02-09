@@ -798,6 +798,7 @@ For configuration help, see [CONFIGURATION.md](CONFIGURATION.md).
 - [CONTRIBUTING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/CONTRIBUTING.md) - Contribution guidelines and workflow
 - [BRANCHING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCHING.md) - Git Flow branching strategy
 - [VERSIONING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/VERSIONING.md) - Semantic versioning and release process
+- [RELEASE_GUIDE.md](RELEASE_GUIDE.md) - npm package release procedures
 - [BRANCH_PROTECTION.md](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCH_PROTECTION.md) - Branch protection setup guide
 - [CHANGELOG.md](CHANGELOG.md) - Version history and changes
 - [SECURITY.md](https://github.com/Swartdraak/Docker-MCP/blob/main/SECURITY.md) - Security policies and reporting

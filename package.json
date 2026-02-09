@@ -80,7 +80,8 @@
     "CONTRIBUTING.md",
     "VERSIONING.md",
     "BRANCHING.md",
-    "BRANCH_PROTECTION.md"
+    "BRANCH_PROTECTION.md",
+    "RELEASE_GUIDE.md"
   ],
   "engines": {
     "node": ">=18.0.0",
