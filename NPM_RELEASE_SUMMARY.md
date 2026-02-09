@@ -186,10 +186,15 @@ To publish this package to npm, follow the steps in [RELEASE_GUIDE.md](RELEASE_G
    - Merge this PR
    - Ensure CI passes
 
-3. **Create release tag**
+3. **Create release tag** (using current package.json version)
    ```bash
-   git tag -a v2.0.0 -m "Release v2.0.0"
-   git push origin v2.0.0
+   # Use npm version to bump and tag automatically
+   npm version patch  # or minor, or major
+   git push origin main --tags
+   
+   # Or manually tag the current version
+   git tag -a v$(node -p "require('./package.json').version") -m "Release v$(node -p "require('./package.json').version")"
+   git push origin --tags
    ```
 
 4. **Automated publishing**

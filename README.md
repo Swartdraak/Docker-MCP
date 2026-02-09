@@ -248,7 +248,7 @@ To integrate with VS Code and GitHub Copilot, add the following to your MCP sett
   "mcpServers": {
     "docker": {
       "command": "npx",
-      "args": ["docker-mcp-server"]
+      "args": ["@swartdraak/docker-mcp-server"]
     }
   }
 }

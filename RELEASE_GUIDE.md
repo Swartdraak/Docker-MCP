@@ -281,4 +281,3 @@ Use this checklist for each release:
 
 For questions about the release process:
 - GitHub Issues: https://github.com/Swartdraak/Docker-MCP/issues
-- Email: eternusprocer@gmail.com
