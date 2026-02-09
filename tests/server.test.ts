@@ -87,13 +87,9 @@ describe('Docker MCP Server', () => {
   });
 
   describe('Package Info', () => {
-    it('should have correct package metadata', async () => {
-      // Read package.json from the root directory
-      const fs = await import('fs');
-      const path = await import('path');
-      const pkgPath = path.default.resolve(path.default.dirname(new URL(import.meta.url).pathname.replace(/^\/([a-zA-Z]:)/, '$1')), '../package.json');
-      const pkgContent = fs.default.readFileSync(pkgPath, 'utf-8');
-      const pkg = JSON.parse(pkgContent);
+    it('should have correct package metadata', () => {
+      // Load package.json using require which works in Jest
+      const pkg = require('../package.json');
       
       expect(pkg.name).toBe('@swartdraak/docker-mcp-server');
       expect(pkg.version).toBe('2.0.0');
