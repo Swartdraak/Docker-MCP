@@ -19,9 +19,7 @@
     "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "prepublishOnly": "npm run clean && npm run build && npm test",
     "prepack": "npm run build",
-    "prepare": "npm run build",
-    "version": "npm run build && git add -A dist",
-    "postversion": "git push && git push --tags"
+    "prepare": "npm run build"
   },
   "keywords": [
     "mcp",

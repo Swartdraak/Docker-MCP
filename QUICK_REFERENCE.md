@@ -220,13 +220,13 @@ REPO="Swartdraak/Docker-MCP"
 gh api repos/$REPO/branches/main/protection \
   --method PUT \
   --field required_pull_request_reviews='{"required_approving_review_count":2}' \
-  --field required_status_checks='{"strict":true,"contexts":["build","test","lint"]}'
+  --field required_status_checks='{"strict":true,"contexts":["CI / Build and Test (18.x)","CI / Build and Test (20.x)","CI / Build and Test (22.x)","CI / quality"]}'
 
 # Protect develop
 gh api repos/$REPO/branches/develop/protection \
   --method PUT \
   --field required_pull_request_reviews='{"required_approving_review_count":1}' \
-  --field required_status_checks='{"strict":true,"contexts":["build","test"]}'
+  --field required_status_checks='{"strict":true,"contexts":["CI / Build and Test (18.x)","CI / Build and Test (20.x)","CI / Build and Test (22.x)","CI / quality"]}'
 ```
 
 ## Common Tasks

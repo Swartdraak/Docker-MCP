@@ -32,6 +32,19 @@ jobs:
       id: get_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
       
+    - name: Verify tag matches package.json version
+      run: |
+        TAG_VERSION="${{ steps.get_version.outputs.VERSION }}"
+        PKG_VERSION=$(node -p "require('./package.json').version")
+        
+        if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+          echo "❌ Error: Tag version (v$TAG_VERSION) does not match package.json version ($PKG_VERSION)"
+          echo "Please ensure the tag version matches the version in package.json"
+          exit 1
+        fi
+        
+        echo "✅ Tag version matches package.json version: $TAG_VERSION"
+      
     - name: Create Release Archive
       run: |
         tar -czf docker-mcp-server-${{ steps.get_version.outputs.VERSION }}.tar.gz \
@@ -76,6 +89,23 @@ jobs:
       
     - name: Run tests
       run: npm test
+      
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Verify tag matches package.json version
+      run: |
+        TAG_VERSION="${{ steps.get_version.outputs.VERSION }}"
+        PKG_VERSION=$(node -p "require('./package.json').version")
+        
+        if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+          echo "❌ Error: Tag version (v$TAG_VERSION) does not match package.json version ($PKG_VERSION)"
+          echo "Aborting npm publish to prevent version mismatch"
+          exit 1
+        fi
+        
+        echo "✅ Tag version matches package.json version: $TAG_VERSION"
       
     - name: Verify package contents
       run: |

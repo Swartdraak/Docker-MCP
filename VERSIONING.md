@@ -369,7 +369,7 @@ npm publish --tag alpha
 
 **Installing:**
 ```bash
-npm install docker-mcp-server@alpha
+npm install @swartdraak/docker-mcp-server@alpha
 ```
 
 ### Beta Releases
@@ -613,7 +613,7 @@ npm pack --dry-run
 
 # 3. Test locally
 npm pack
-tar -xzf docker-mcp-server-2.1.0.tgz
+tar -xzf swartdraak-docker-mcp-server-2.1.0.tgz
 cd package
 npm install
 npm test
@@ -622,8 +622,8 @@ npm test
 npm publish --access public
 
 # 5. Verify
-npm view docker-mcp-server
-npm info docker-mcp-server
+npm view @swartdraak/docker-mcp-server
+npm info @swartdraak/docker-mcp-server
 ```
 
 ### Publishing Checklist

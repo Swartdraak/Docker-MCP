@@ -38,14 +38,12 @@ Branch protection rules provide:
 - ✅ Dismiss stale reviews on new commits
 - ✅ Require review from code owners (if CODEOWNERS file exists)
 - ✅ Require status checks to pass:
-  - `build` (Node 18.x, 20.x, 22.x)
-  - `lint`
-  - `test`
+  - `CI / Build and Test` (Node 18.x, 20.x, 22.x)
+  - `CI / quality`
   - `CodeQL`
   - `dependency-review`
 - ✅ Require branches to be up to date before merging
 - ✅ Require signed commits
-- ✅ Require linear history (no merge commits from feature branches)
 - ✅ Include administrators
 - ❌ Allow force pushes: Disabled
 - ❌ Allow deletions: Disabled
@@ -64,9 +62,8 @@ Branch protection rules provide:
 - ✅ Require pull request reviews (1 approval)
 - ✅ Dismiss stale reviews on new commits
 - ✅ Require status checks to pass:
-  - `build` (Node 18.x, 20.x, 22.x)
-  - `lint`
-  - `test`
+  - `CI / Build and Test` (Node 18.x, 20.x, 22.x)
+  - `CI / quality`
 - ✅ Require branches to be up to date before merging
 - ⚠️ Require signed commits (optional)
 - ❌ Allow force pushes: Disabled
@@ -117,11 +114,10 @@ REPO="Swartdraak/Docker-MCP"
 # Protect main branch
 gh api repos/$REPO/branches/main/protection \
   --method PUT \
-  --field required_status_checks='{"strict":true,"contexts":["build (18.x)","build (20.x)","build (22.x)","lint","test","CodeQL"]}' \
+  --field required_status_checks='{"strict":true,"contexts":["CI / Build and Test (18.x)","CI / Build and Test (20.x)","CI / Build and Test (22.x)","CI / quality"]}' \
   --field enforce_admins=true \
   --field required_pull_request_reviews='{"dismissal_restrictions":{},"dismiss_stale_reviews":true,"require_code_owner_reviews":false,"required_approving_review_count":2,"require_last_push_approval":false}' \
   --field restrictions=null \
-  --field required_linear_history=true \
   --field allow_force_pushes=false \
   --field allow_deletions=false \
   --field required_conversation_resolution=true
@@ -161,18 +157,16 @@ gh api repos/$REPO/branches/develop/protection \
 **Require status checks to pass before merging:**
 - ✅ Require branches to be up to date before merging
 - Add required status checks:
-  - `build (18.x)`
-  - `build (20.x)`
-  - `build (22.x)`
-  - `lint`
-  - `test`
-  - `CodeQL`
+  - `CI / Build and Test (18.x)`
+  - `CI / Build and Test (20.x)`
+  - `CI / Build and Test (22.x)`
+  - `CI / quality`
+  - `CodeQL / Analyze`
   - `dependency-review`
 
 **Additional settings:**
 - ✅ Require conversation resolution before merging
 - ✅ Require signed commits
-- ✅ Require linear history
 - ✅ Include administrators
 - ❌ Allow force pushes: Disabled
 - ❌ Allow deletions: Disabled
@@ -196,11 +190,10 @@ gh api repos/$REPO/branches/develop/protection \
 **Require status checks to pass before merging:**
 - ✅ Require branches to be up to date before merging
 - Add required status checks:
-  - `build (18.x)`
-  - `build (20.x)`
-  - `build (22.x)`
-  - `lint`
-  - `test`
+  - `CI / Build and Test (18.x)`
+  - `CI / Build and Test (20.x)`
+  - `CI / Build and Test (22.x)`
+  - `CI / quality`
 
 **Additional settings:**
 - ✅ Require conversation resolution before merging

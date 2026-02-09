@@ -27,13 +27,11 @@ jobs:
       run: |
         echo "branch=${{ github.base_ref }}" >> $GITHUB_OUTPUT
     
-    - name: Checkout target branch
+    - name: Prepare base files from target branch
       run: |
         git fetch origin ${{ steps.target.outputs.branch }}
-        git checkout origin/${{ steps.target.outputs.branch }} -- package.json CHANGELOG.md || true
-        mv package.json package.json.base || true
-        mv CHANGELOG.md CHANGELOG.md.base || true
-        git checkout ${{ github.head_ref }}
+        git show origin/${{ steps.target.outputs.branch }}:package.json > package.json.base || true
+        git show origin/${{ steps.target.outputs.branch }}:CHANGELOG.md > CHANGELOG.md.base || true
     
     - name: Check version bumped
       id: version
@@ -85,8 +83,8 @@ jobs:
         
         NEW_VERSION="${{ steps.version.outputs.new }}"
         
-        # Check if new version is mentioned in CHANGELOG
-        if grep -q "\[$NEW_VERSION\]" CHANGELOG.md; then
+        # Check if new version is mentioned in CHANGELOG (fixed-string match)
+        if grep -Fq "[$NEW_VERSION]" CHANGELOG.md; then
           echo "✅ CHANGELOG.md updated with version $NEW_VERSION"
         else
           echo "❌ CHANGELOG.md not updated with version $NEW_VERSION"
@@ -129,10 +127,13 @@ jobs:
           - [x] CHANGELOG.md updated
           
           ### Release Notes
-          When this PR is merged to \`main\`, it will:
-          1. Create a GitHub release for version ${newVer}
-          2. Build and publish the package
-          3. Tag the commit as \`v${newVer}\`
+          When this PR is merged to \`main\`:
+          1. The changes will be prepared for release version ${newVer}
+          
+          To trigger the actual release and publish:
+          1. Create and push the tag \`v${newVer}\`
+          2. The release workflow will create a GitHub release
+          3. The release workflow will build and publish the package to npm
           
           See [VERSIONING.md](https://github.com/${{ github.repository }}/blob/main/VERSIONING.md) for details.
           `;

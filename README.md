@@ -684,8 +684,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project follows industry-standard practices:
 
-- **Branching Strategy**: Git Flow (see [BRANCHING.md](BRANCHING.md))
-- **Versioning**: Semantic Versioning 2.0.0 (see [VERSIONING.md](VERSIONING.md))
+- **Branching Strategy**: Git Flow (see [BRANCHING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCHING.md))
+- **Versioning**: Semantic Versioning 2.0.0 (see [VERSIONING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/VERSIONING.md))
 - **Commit Convention**: Conventional Commits
 - **CI/CD**: Automated testing and releases via GitHub Actions
 
@@ -697,7 +697,7 @@ This project follows industry-standard practices:
 4. Ensure tests pass: `npm test`
 5. Push and create a Pull Request to `develop`
 
-For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+For detailed guidelines, see [CONTRIBUTING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/CONTRIBUTING.md).
 
 ### Branch Structure
 
@@ -725,7 +725,7 @@ git tag -a v2.1.0 -m "Version 2.1.0"
 git push origin main --tags
 ```
 
-See [VERSIONING.md](VERSIONING.md) for complete release procedures.
+See [VERSIONING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/VERSIONING.md) for complete release procedures.
 
 
 For detailed usage examples, see [EXAMPLES.md](EXAMPLES.md).
@@ -738,16 +738,16 @@ For configuration help, see [CONFIGURATION.md](CONFIGURATION.md).
 - [README.md](README.md) - Main documentation and quick start
 - [CONFIGURATION.md](CONFIGURATION.md) - Configuration options and setup
 - [EXAMPLES.md](EXAMPLES.md) - Usage examples for all tools
-- [REMOTE_SETUP.md](REMOTE_SETUP.md) - Remote Docker connection setup
-- [MIGRATION.md](MIGRATION.md) - Migration guides for version upgrades
+- [REMOTE_SETUP.md](https://github.com/Swartdraak/Docker-MCP/blob/main/REMOTE_SETUP.md) - Remote Docker connection setup
+- [MIGRATION.md](https://github.com/Swartdraak/Docker-MCP/blob/main/MIGRATION.md) - Migration guides for version upgrades
 
 ### Developer Documentation
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines and workflow
-- [BRANCHING.md](BRANCHING.md) - Git Flow branching strategy
-- [VERSIONING.md](VERSIONING.md) - Semantic versioning and release process
-- [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md) - Branch protection setup guide
+- [CONTRIBUTING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/CONTRIBUTING.md) - Contribution guidelines and workflow
+- [BRANCHING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCHING.md) - Git Flow branching strategy
+- [VERSIONING.md](https://github.com/Swartdraak/Docker-MCP/blob/main/VERSIONING.md) - Semantic versioning and release process
+- [BRANCH_PROTECTION.md](https://github.com/Swartdraak/Docker-MCP/blob/main/BRANCH_PROTECTION.md) - Branch protection setup guide
 - [CHANGELOG.md](CHANGELOG.md) - Version history and changes
-- [SECURITY.md](SECURITY.md) - Security policies and reporting
+- [SECURITY.md](https://github.com/Swartdraak/Docker-MCP/blob/main/SECURITY.md) - Security policies and reporting
 
 ## License
 
