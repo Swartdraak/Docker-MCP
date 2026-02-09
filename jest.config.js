@@ -11,6 +11,9 @@ export default {
       'ts-jest',
       {
         useESM: true,
+        tsconfig: {
+          module: 'esnext',
+        },
       },
     ],
   },
@@ -25,3 +28,4 @@ export default {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
 };
+
