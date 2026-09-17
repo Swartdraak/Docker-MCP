@@ -14,33 +14,27 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      # Map the secret to a job-level env var: the `secrets` context is not
-      # permitted inside job-level `if:` expressions ("Unrecognized
-      # named-value: 'secrets'"), which previously made this workflow
-      # unparseable and failing on every push (run #20).
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
         cache: 'npm'
-        
+
     - name: Install dependencies
       run: npm ci
-      
+
     - name: Build
       run: npm run build
-      
+
     - name: Get version from tag
       id: get_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-      
+
     - name: Verify tag matches package.json version
       # Guard: meaningful only on tag pushes (the workflow's intended
       # trigger). On non-tag runs the derived tag is empty and the
@@ -49,20 +43,20 @@ jobs:
       run: |
         TAG_VERSION="${{ steps.get_version.outputs.VERSION }}"
         PKG_VERSION=$(node -p "require('./package.json').version")
-        
+
         if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
           echo "❌ Error: Tag version (v$TAG_VERSION) does not match package.json version ($PKG_VERSION)"
           echo "Please ensure the tag version matches the version in package.json"
           exit 1
         fi
-        
+
         echo "✅ Tag version matches package.json version: $TAG_VERSION"
-      
+
     - name: Create Release Archive
       run: |
         tar -czf docker-mcp-server-${{ steps.get_version.outputs.VERSION }}.tar.gz \
           dist/ package.json package-lock.json README.md LICENSE CONFIGURATION.md EXAMPLES.md
-          
+
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
@@ -73,45 +67,69 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  check-secrets:
+    name: Check NPM_TOKEN
+    runs-on: ubuntu-latest
+    needs: release
+    # Republishes the NPM_TOKEN presence as a job OUTPUT: job-level `if:`
+    # may only reference the github, needs, vars and inputs contexts, so
+    # the secret is read here — in a step, where the `secrets` context IS
+    # allowed — and the npm-publish job gates on the output below.
+    outputs:
+      ok: ${{ steps.check.outputs.ok }}
+    permissions:
+      contents: read
+
+    steps:
+    - name: Check NPM_TOKEN
+      id: check
+      run: |
+        if [ -n "${{ secrets.NPM_TOKEN }}" ]; then
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "ok=false" >> "$GITHUB_OUTPUT"
+        fi
+
   npm-publish:
     name: Publish to npm
     runs-on: ubuntu-latest
-    needs: release
-    # Only run if NPM_TOKEN secret is configured. The `secrets` context is
-    # not permitted in job-level `if:` expressions (it makes the workflow
-    # unparseable), so the token is mapped to a job-level env var (below)
-    # and the condition tests the env context instead.
-    if: env.NPM_TOKEN != ''
+    needs: [release, check-secrets]
+    # Job-level `if:` may only reference the github, needs, vars and
+    # inputs contexts (plus the always/cancelled/success/failure status
+    # functions). Neither `secrets` nor `env` is permitted there — both
+    # make GitHub reject the ENTIRE workflow at parse time. The
+    # check-secrets job above reads the secret where it IS allowed and
+    # republishes its presence as a job output, which this condition
+    # gates on.
+    if: needs.check-secrets.outputs.ok == 'true'
     permissions:
       contents: read
       id-token: write
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
         registry-url: 'https://registry.npmjs.org'
         cache: 'npm'
-        
+
     - name: Install dependencies
       run: npm ci
-      
+
     - name: Build
       run: npm run build
-      
+
     - name: Run tests
       run: npm test
-      
+
     - name: Get version from tag
       id: get_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-      
+
     - name: Verify tag matches package.json version
       # Guard: meaningful only on tag pushes (the workflow's intended
       # trigger). On non-tag runs the derived tag is empty and the
@@ -120,21 +138,23 @@ jobs:
       run: |
         TAG_VERSION="${{ steps.get_version.outputs.VERSION }}"
         PKG_VERSION=$(node -p "require('./package.json').version")
-        
+
         if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
           echo "❌ Error: Tag version (v$TAG_VERSION) does not match package.json version ($PKG_VERSION)"
           echo "Aborting npm publish to prevent version mismatch"
           exit 1
         fi
-        
+
         echo "✅ Tag version matches package.json version: $TAG_VERSION"
-      
+
     - name: Verify package contents
       run: |
         npm pack --dry-run
         echo "Package contents verified"
-      
+
     - name: Publish to npm
+      # Step-level env DOES permit the secrets context — the token is
+      # read directly here instead of via an env-context indirection.
       run: npm publish --provenance --access public
       env:
-        NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

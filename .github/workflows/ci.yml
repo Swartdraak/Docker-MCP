@@ -128,16 +128,17 @@ jobs:
     name: Workflow Lint
     runs-on: ubuntu-latest
     # Catches malformed workflow YAML at PR time instead of at trigger
-    # time. Without this, a broken expression (e.g. the `secrets`
-    # context in a job-level `if:`, which GitHub rejects with
-    # "Unrecognized named-value: 'secrets'") only fails when the
-    # trigger event arrives — which is what left release.yml failing
+    # time. Without this, a broken expression (e.g. the `secrets` or
+    # `env` context in a job-level `if:`, which GitHub rejects with
+    # "Unrecognized named-value: '...'") only fails when the trigger
+    # event arrives — which is what left release.yml failing
     # on every push (runs #13-#20) for months.
     #
     # The validator is plain Node (js-yaml is a devDependency): it
-    # parses every workflow file and rejects secrets-context usage in
-    # job-level if: conditions, the exact class of error that broke
-    # release.yml.
+    # parses every workflow file and rejects any if: expression that
+    # references a context outside the allow-list (github, needs, vars,
+    # inputs + the always/cancelled/success/failure status functions) —
+    # the exact class of error that broke release.yml, twice.
     permissions:
       contents: read
 

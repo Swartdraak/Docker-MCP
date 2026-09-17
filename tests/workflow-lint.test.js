@@ -83,14 +83,18 @@ describe('validate_workflows.js regression guard', () => {
     );
     expect(
       'mentions the secrets context',
-      /secrets context/.test(r.stderr) || /secrets context/.test(r.stdout),
+      /secrets/.test(r.stderr) || /secrets/.test(r.stdout),
       r.stderr
     );
     fs.rmSync(tmp, { recursive: true, force: true });
   });
 
-  test('accepts env-context if: with a job-level env mapping (the fix)', () => {
-    const tmp = makeFixture('good-env-if', {
+  test('rejects env context in a job-level if: (the rejected-repair regression)', () => {
+    // The first repair attempt replaced `secrets.` with `env.` in the
+    // same job-level if: — `env` is equally NOT available there, so
+    // GitHub fails the whole workflow at parse time. The guard must
+    // reject it and name the env context.
+    const tmp = makeFixture('bad-env-if', {
       'release.yml': [
         'name: Release',
         'on:',
@@ -106,6 +110,58 @@ describe('validate_workflows.js regression guard', () => {
         '    steps:',
         '    - name: noop',
         '      run: echo ok',
+      ].join('\n'),
+    });
+    const r = runValidator(tmp);
+    expect('exits non-zero', r.status !== 0, `status=${r.status} stdout=${r.stdout}`);
+    expect(
+      'reports the offending job if:',
+      /jobs\.npm-publish\.if/.test(r.stderr) || /jobs\.npm-publish\.if/.test(r.stdout),
+      r.stderr
+    );
+    expect(
+      'names the env context',
+      /env context/.test(r.stderr) || /env context/.test(r.stdout),
+      r.stderr
+    );
+    fs.rmSync(tmp, { recursive: true, force: true });
+  });
+
+  test('accepts the needs-outputs gate (the fix)', () => {
+    // The sanctioned replacement: a check job reads the secret where
+    // the secrets context IS allowed (a step) and republishes a
+    // boolean job output; the downstream job gates on
+    // needs.<job>.outputs.<name>. All if: contexts are permitted.
+    const tmp = makeFixture('good-needs-output-if', {
+      'release.yml': [
+        'name: Release',
+        'on:',
+        "  push:",
+        '    tags:',
+        "      - 'v*'",
+        'jobs:',
+        '  check-secrets:',
+        "    runs-on: ubuntu-latest",
+        '    outputs:',
+        '      ok: ${{ steps.check.outputs.ok }}',
+        '    steps:',
+        '    - name: Check NPM_TOKEN',
+        '      id: check',
+        '      run: |',
+        '        if [ -n "${{ secrets.NPM_TOKEN }}" ]; then',
+        '          echo "ok=true" >> "$GITHUB_OUTPUT"',
+        '        else',
+        '          echo "ok=false" >> "$GITHUB_OUTPUT"',
+        '        fi',
+        '  npm-publish:',
+        "    runs-on: ubuntu-latest",
+        '    needs: [check-secrets]',
+        "    if: needs.check-secrets.outputs.ok == 'true'",
+        '    steps:',
+        '    - name: Publish',
+        '      run: npm publish',
+        '      env:',
+        '        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}',
       ].join('\n'),
     });
     const r = runValidator(tmp);

@@ -3,10 +3,16 @@
 # Verified audit baseline: base_sha 6a4c8d5a9f5f50950e17b8d93a23b7dd6b069fda (main),
 # audited 2026-09-17 in Docker (node v20.20.2, npm 10.8.2). Evidence: ../baseline.json, ../logs/.
 # Development update 2026-09-17 (base_sha d1d90407810c81d3f1a51599740e190c536c0bc5, main):
-#   CI repair for the release.yml parse failure (secrets context in job-level if:)
-#   plus a workflow-validation regression guard. Re-verified in Docker:
-#   npm ci, npm run lint, npm test (3 suites, 23/23), npm run build, runtime
-#   smoke, and node scripts/validate_workflows.cjs all exit 0.
+#   CI repair for the release.yml parse failure (job-level if: referenced a
+#   context unavailable there — first `secrets`, then `env` in the rejected
+#   repair attempt). Fix: check-secrets job reads the secret where the
+#   secrets context IS allowed and republishes a boolean job output;
+#   npm-publish gates on needs.check-secrets.outputs.ok. Regression guard:
+#   validator rejects ANY context outside the allow-list (github, needs,
+#   vars, inputs + always/cancelled/success/failure) in job/step if:.
+#   Re-verified in Docker: npm ci, npm run lint, npm test (3 suites,
+#   24/24), npm run build, runtime smoke, and
+#   node scripts/validate_workflows.cjs all exit 0.
 # Commands below are recorded from verified runs only.
 
 repo:
@@ -63,14 +69,15 @@ lint:
 unit:
   - command: npm test
     status: verified
-    evidence: "exit 0; jest, 3 suites, 23/23 tests pass (logs/03_test.log)"
+    evidence: "exit 0; jest, 3 suites, 24/24 tests pass (logs/03_test.log)"
     note: >
       pre-existing fault: jest worker force-exit warning — the stdio MCP
       server started during tests leaks open handles; non-blocking, exit 0.
       server.test.ts validates a hardcoded tool-name list, not exported
       code; no live daemon required. workflow-lint.test.js covers the
       workflow YAML validator (regression guard for the release.yml
-      secrets-in-if: incident).
+      context-in-if: incident: rejects secrets.* and env.* in job-level
+      if:; accepts the needs-outputs gate pattern).
 
 integration:
   - command: docker version
@@ -96,7 +103,7 @@ ci:
         - "build (matrix node 18/20/22: npm ci, lint, test, build, artifact dist-*)"
         - "docker-check (needs build: docker ps, docker run --rm hello-world)"
         - "quality (type check, package.json check, secret grep)"
-        - "workflow-lint (npm ci; node scripts/validate_workflows.cjs — parses all workflow YAML and rejects secrets-context usage in if: conditions)"
+        - "workflow-lint (npm ci; node scripts/validate_workflows.cjs — parses all workflow YAML and rejects any if: context outside the allow-list github/needs/vars/inputs + always/cancelled/success/failure)"
     - name: CodeQL
       file: .github/workflows/codeql.yml
       jobs:
@@ -108,7 +115,9 @@ ci:
     - name: Release
       file: .github/workflows/release.yml
       jobs:
-        - "tag v* -> GitHub Release + npm publish (needs secrets)"
+        - "release (tag v*: build, version-check, tarball, GitHub Release — contents: write)"
+        - "check-secrets (needs release: republishes NPM_TOKEN presence as job output ok)"
+        - "npm-publish (needs release + check-secrets; gated on needs.check-secrets.outputs.ok == 'true'; npm publish --provenance; id-token: write)"
     - name: Version Check
       file: .github/workflows/version-check.yml
       jobs:
