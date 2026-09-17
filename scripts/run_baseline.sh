@@ -11,7 +11,7 @@
 # the logs and from stdout.
 set -u
 
-OUT="${1:-/workspace/logs}"
+OUT="${1:-.}"
 BASE_SHA="${2:-$(git rev-parse HEAD)}"
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_DIR"
