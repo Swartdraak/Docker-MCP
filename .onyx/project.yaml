@@ -2,6 +2,11 @@
 
 # Verified audit baseline: base_sha 6a4c8d5a9f5f50950e17b8d93a23b7dd6b069fda (main),
 # audited 2026-09-17 in Docker (node v20.20.2, npm 10.8.2). Evidence: ../baseline.json, ../logs/.
+# Development update 2026-09-17 (base_sha d1d90407810c81d3f1a51599740e190c536c0bc5, main):
+#   CI repair for the release.yml parse failure (secrets context in job-level if:)
+#   plus a workflow-validation regression guard. Re-verified in Docker:
+#   npm ci, npm run lint, npm test (3 suites, 23/23), npm run build, runtime
+#   smoke, and node scripts/validate_workflows.cjs all exit 0.
 # Commands below are recorded from verified runs only.
 
 repo:
@@ -58,12 +63,14 @@ lint:
 unit:
   - command: npm test
     status: verified
-    evidence: "exit 0; jest, 2 suites, 19/19 tests pass (logs/03_test.log)"
+    evidence: "exit 0; jest, 3 suites, 23/23 tests pass (logs/03_test.log)"
     note: >
       pre-existing fault: jest worker force-exit warning — the stdio MCP
       server started during tests leaks open handles; non-blocking, exit 0.
       server.test.ts validates a hardcoded tool-name list, not exported
-      code; no live daemon required.
+      code; no live daemon required. workflow-lint.test.js covers the
+      workflow YAML validator (regression guard for the release.yml
+      secrets-in-if: incident).
 
 integration:
   - command: docker version
@@ -89,6 +96,7 @@ ci:
         - "build (matrix node 18/20/22: npm ci, lint, test, build, artifact dist-*)"
         - "docker-check (needs build: docker ps, docker run --rm hello-world)"
         - "quality (type check, package.json check, secret grep)"
+        - "workflow-lint (npm ci; node scripts/validate_workflows.cjs — parses all workflow YAML and rejects secrets-context usage in if: conditions)"
     - name: CodeQL
       file: .github/workflows/codeql.yml
       jobs:

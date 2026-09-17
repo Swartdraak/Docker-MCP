@@ -123,3 +123,41 @@ jobs:
         else
           echo "✓ No obvious secrets found"
         fi
+
+  workflow-lint:
+    name: Workflow Lint
+    runs-on: ubuntu-latest
+    # Catches malformed workflow YAML at PR time instead of at trigger
+    # time. Without this, a broken expression (e.g. the `secrets`
+    # context in a job-level `if:`, which GitHub rejects with
+    # "Unrecognized named-value: 'secrets'") only fails when the
+    # trigger event arrives — which is what left release.yml failing
+    # on every push (runs #13-#20) for months.
+    #
+    # The validator is plain Node (js-yaml is a devDependency): it
+    # parses every workflow file and rejects secrets-context usage in
+    # job-level if: conditions, the exact class of error that broke
+    # release.yml.
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    # js-yaml (a transitive dependency of jest, present in node_modules
+    # after npm ci) is used by the validator; no extra install needed.
+    - name: Validate workflow files
+      run: node scripts/validate_workflows.cjs
+
+  # The linter is also run at PR time on this very CI job, so a
+  # malformed workflow cannot merge undetected.
