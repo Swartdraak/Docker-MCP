@@ -20,7 +20,8 @@ export default {
   },
   testMatch: [
     '**/__tests__/**/*.test.ts',
-    '**/?(*.)+(spec|test).ts'
+    '**/?(*.)+(spec|test).ts',
+    '**/?(*.)+(spec|test).js',
   ],
   collectCoverageFrom: [
     'src/**/*.ts',
