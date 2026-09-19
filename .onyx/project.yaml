@@ -1,0 +1,135 @@
+# Onyx Project Contract — @swartdraak/docker-mcp-server
+
+# Verified audit baseline: base_sha 6a4c8d5a9f5f50950e17b8d93a23b7dd6b069fda (main),
+# audited 2026-09-17 in Docker (node v20.20.2, npm 10.8.2). Evidence: ../baseline.json, ../logs/.
+# Development update 2026-09-17 (base_sha d1d90407810c81d3f1a51599740e190c536c0bc5, main):
+#   CI repair for the release.yml parse failure (job-level if: referenced a
+#   context unavailable there — first `secrets`, then `env` in the rejected
+#   repair attempt). Fix: check-secrets job reads the secret where the
+#   secrets context IS allowed and republishes a boolean job output;
+#   npm-publish gates on needs.check-secrets.outputs.ok. Regression guard:
+#   validator rejects ANY context outside the allow-list (github, needs,
+#   vars, inputs + always/cancelled/success/failure) in job/step if:.
+#   Re-verified in Docker: npm ci, npm run lint, npm test (3 suites,
+#   24/24), npm run build, runtime smoke, and
+#   node scripts/validate_workflows.cjs all exit 0.
+# Commands below are recorded from verified runs only.
+
+repo:
+  provider: github
+  name: Swartdraak/Docker-MCP
+  repo_id: "1152499034"
+  canonical_url: https://github.com/Swartdraak/Docker-MCP
+  default_branch: main
+  license: MIT
+
+components:
+  - name: docker-mcp-server
+    type: library-cli
+    language: TypeScript
+    module_system: "ESM (compiled to CommonJS via tsc, module Node16)"
+    entry: dist/index.js
+    description: >
+      MCP server (Model Context Protocol) exposing Docker management over
+      stdio. 38 tools across containers, images, networks, volumes, system
+      and docker-compose. Single source module src/index.ts (~1900 lines).
+    runtime:
+      node: ">=18.0.0"
+      npm: ">=9.0.0"
+      env:
+        - name: DOCKER_HOST
+          required: false
+          description: "Docker daemon URL (unix://, tcp://, http(s)://, host:port); default local socket"
+        - name: DOCKER_TLS_VERIFY
+          required: false
+          description: "Enable TLS verification ('1'/'true'); fails fast without DOCKER_CERT_PATH"
+        - name: DOCKER_CERT_PATH
+          required: false
+          description: "Directory with ca.pem, cert.pem, key.pem for TLS"
+        - name: DOCKER_PORT
+          required: false
+          description: "Daemon port override (default 2375 HTTP / 2376 HTTPS)"
+
+bootstrap:
+  - command: npm ci
+    status: verified
+    evidence: "exit 0 (logs/01_npm_ci.log)"
+
+build:
+  - command: npm run build
+    status: verified
+    evidence: "exit 0; emits dist/index.js + declaration maps (logs/04_build.log)"
+
+lint:
+  - command: npm run lint
+    status: verified
+    evidence: "exit 0; tsc --noEmit, strict mode (logs/02_lint.log)"
+    note: "type check only — no ESLint/prettier configured"
+
+unit:
+  - command: npm test
+    status: verified
+    evidence: "exit 0; jest, 3 suites, 24/24 tests pass (logs/03_test.log)"
+    note: >
+      pre-existing fault: jest worker force-exit warning — the stdio MCP
+      server started during tests leaks open handles; non-blocking, exit 0.
+      server.test.ts validates a hardcoded tool-name list, not exported
+      code; no live daemon required. workflow-lint.test.js covers the
+      workflow YAML validator (regression guard for the release.yml
+      context-in-if: incident: rejects secrets.* and env.* in job-level
+      if:; accepts the needs-outputs gate pattern).
+
+integration:
+  - command: docker version
+    status: skipped
+    evidence: "docker CLI and /var/run/docker.sock absent in audit container (logs/06_docker_integration_skipped.log)"
+    note: "no Docker integration claim recorded; CI docker-check job (docker ps / hello-world) runs in GitHub Actions only"
+
+runtime:
+  start: node dist/index.js
+  status: verified
+  health:
+    command: node dist/index.js
+    check: "stdout/stderr emits 'Docker MCP Server running on stdio' within ~1s; stdio long-running process"
+    evidence: "6s timeout smoke run, clean exit (logs/05_runtime_smoke.log)"
+  protocol: "MCP over stdio (StdioServerTransport); no HTTP port, no health endpoint"
+
+ci:
+  provider: github-actions
+  workflows:
+    - name: CI
+      file: .github/workflows/ci.yml
+      jobs:
+        - "build (matrix node 18/20/22: npm ci, lint, test, build, artifact dist-*)"
+        - "docker-check (needs build: docker ps, docker run --rm hello-world)"
+        - "quality (type check, package.json check, secret grep)"
+        - "workflow-lint (npm ci; node scripts/validate_workflows.cjs — parses all workflow YAML and rejects any if: context outside the allow-list github/needs/vars/inputs + always/cancelled/success/failure)"
+    - name: CodeQL
+      file: .github/workflows/codeql.yml
+      jobs:
+        - "analyze (push/PR main+develop, weekly schedule)"
+    - name: Dependency Review
+      file: .github/workflows/dependency-review.yml
+      jobs:
+        - "dependency-review-action, fail-on-severity: moderate"
+    - name: Release
+      file: .github/workflows/release.yml
+      jobs:
+        - "release (tag v*: build, version-check, tarball, GitHub Release — contents: write)"
+        - "check-secrets (needs release: republishes NPM_TOKEN presence as job output ok)"
+        - "npm-publish (needs release + check-secrets; gated on needs.check-secrets.outputs.ok == 'true'; npm publish --provenance; id-token: write)"
+    - name: Version Check
+      file: .github/workflows/version-check.yml
+      jobs:
+        - "version/changelog consistency on PRs touching package.json/CHANGELOG.md"
+
+security:
+  - command: grep -rE "password|secret|token|api[_-]key" src/ --include='*.ts' --include='*.js'
+    status: verified
+    evidence: "CI 'quality' job; no hard-coded credentials in src/"
+  - note: "CodeQL (OWASP/JS, security-extended) via workflow; dependency-review fail-on-severity=moderate"
+
+autonomy:
+  gates:
+    - "npm ci && npm run lint && npm test && npm run build"
+  no_secrets_in_contract: true
