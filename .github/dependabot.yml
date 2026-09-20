@@ -1,0 +1,15 @@
+# Dependabot configuration — enables repository-native security update PRs.
+#
+# This manifest was the root coverage gap behind the 89 open Dependabot alerts
+# (all in package-lock.json, single shared cause: a stale lockfile): without a
+# dependabot.yml, no Dependabot update PRs can ever be opened for this
+# repository.
+#
+# Scope: the npm ecosystem at the repository root, checked weekly.
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
