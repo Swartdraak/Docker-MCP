@@ -13,6 +13,27 @@
 #   Re-verified in Docker: npm ci, npm run lint, npm test (3 suites,
 #   24/24), npm run build, runtime smoke, and
 #   node scripts/validate_workflows.cjs all exit 0.
+# Development update 2026-09-21 (base_sha d4d529f7315f32235f41fa1765e1e908810fa5d5, develop):
+#   Issue #18 — CodeQL Security Scan workflow auto-disabled (disabled_inactivity),
+#   code-scanning coverage lapsed 2026-04-12. Root cause is a repository SETTING,
+#   not a code defect: the free CodeQL workflow file is unchanged and correct on
+#   develop, but GitHub auto-disabled it after inactivity. Re-enabling is
+#   PUT /repos/Swartdraak/Docker-MCP/actions/workflows/231710398/enable
+#   (Actions:write, owner/maintainer authority) — recorded in
+#   ../PR_DESCRIPTION.md, NOT performed by this stage (no Actions:write
+#   credential; publication is handled by the repo stage).
+#   Repository-side change: regression guard tests/codeql-workflow.test.js
+#   (4 cases) pins the workflow file's coverage contract — file presence,
+#   weekly schedule cron (whose absence is what enabled the inactivity
+#   disable), push/pull_request triggers on main+develop, javascript
+#   language + security-and-quality queries + security-events: write —
+#   asserted against the governed HEAD via git show, so a future
+#   trigger/schedule regression fails CI before coverage lapses again.
+#   Re-verified in Docker (node v20.20.2, npm 10.8.2): npm ci,
+#   npm run lint, npm test (4 suites, 28/28), npm run build, runtime
+#   smoke, node scripts/validate_workflows.cjs and the credential grep
+#   all exit 0. Docker daemon integration skipped (no docker CLI/socket
+#   in audit container; CI docker-check job covers it on GitHub Actions).
 # Commands below are recorded from verified runs only.
 
 repo:
@@ -21,6 +42,7 @@ repo:
   repo_id: "1152499034"
   canonical_url: https://github.com/Swartdraak/Docker-MCP
   default_branch: main
+  integration_branch: develop
   license: MIT
 
 components:
@@ -69,7 +91,7 @@ lint:
 unit:
   - command: npm test
     status: verified
-    evidence: "exit 0; jest, 3 suites, 24/24 tests pass (logs/03_test.log)"
+    evidence: "exit 0; jest, 4 suites, 28/28 tests pass (2026-09-21 re-verification)"
     note: >
       pre-existing fault: jest worker force-exit warning — the stdio MCP
       server started during tests leaks open handles; non-blocking, exit 0.
@@ -77,7 +99,15 @@ unit:
       code; no live daemon required. workflow-lint.test.js covers the
       workflow YAML validator (regression guard for the release.yml
       context-in-if: incident: rejects secrets.* and env.* in job-level
-      if:; accepts the needs-outputs gate pattern).
+      if:; accepts the needs-outputs gate pattern). codeql-workflow.test.js
+      (issue #18, 2026-09-21) is a regression guard for the CodeQL
+      Security Scan coverage contract: asserts .github/workflows/codeql.yml
+      exists and retains its weekly schedule cron, push/pull_request
+      triggers on main+develop, javascript language, security-and-quality
+      queries and security-events: write — read from the governed HEAD via
+      git show, so a trigger/schedule regression (the exact failure mode
+      that led to the disabled_inactivity lapse) fails CI before
+      code-scanning coverage lapses again.
 
 integration:
   - command: docker version
