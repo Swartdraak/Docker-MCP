@@ -34,6 +34,32 @@
 #   smoke, node scripts/validate_workflows.cjs and the credential grep
 #   all exit 0. Docker daemon integration skipped (no docker CLI/socket
 #   in audit container; CI docker-check job covers it on GitHub Actions).
+# Development update 2026-09-28 (base_sha 768f08ed263f928b9744ba530fcd525a65fc5303, develop):
+#   Issue #21 — develop-tree dependency defects, proven at the exact integration
+#   head by fresh `npm ci` + `npm audit`: minimatch 10.1.2 (HIGH, ReDoS
+#   GHSA-3ppc-4f35-3m26 / GHSA-7r86-cg39-jmmj / GHSA-23c5-xmqv-rm74) via the
+#   glob ^13.0.0 override pulling glob 13.0.1, and uuid 10.0.0 (MODERATE,
+#   GHSA-w5hq-g745-h8pq, CVSS 7.5) via dockerode 4.0.9 -> uuid ^10.0.0 (prod).
+#   Fix (lockfile/override configuration only — no product source edits):
+#     * overrides.glob ^13.0.0 -> ^13.0.6 (glob 13.0.6 depends on minimatch
+#       ^10.2.2, resolving to >=10.2.3 which clears the ReDoS band).
+#     * dependencies.dockerode ^4.0.2 -> ^5.0.1. dockerode 5.x removed its uuid
+#       dependency (gRPC session-id in lib/session.js now uses built-in
+#       crypto.randomUUID() instead of uuid.v4()), taking uuid out of the
+#       dependency tree rather than force-overriding a major version into a
+#       package that declares uuid ^10.0.0.
+#     * package-lock.json refreshed (dockerode 5.0.1, glob 13.0.6,
+#       minimatch 10.2.6; no uuid node remains).
+#     * tests/dependency-pins.test.js: regression guard pinning the dependency
+#       contract (minimatch >=10.2.3, no uuid node, dockerode 5.x with no uuid
+#       dep, glob override floor) against the governed HEAD, so a relapse
+#       fails CI before the advisories resurface.
+#   Re-verified in Docker (node v20.20.2, npm 10.8.2): npm ci, npm audit
+#   (0 vulnerabilities), npm run lint, npm test (5 suites, 34/34),
+#   npm run build, runtime smoke, node scripts/validate_workflows.cjs and the
+#   credential grep all exit 0. Docker daemon integration skipped (no docker
+#   CLI/socket in audit container; CI docker-check job covers it on GitHub
+#   Actions).
 # Commands below are recorded from verified runs only.
 
 repo:
